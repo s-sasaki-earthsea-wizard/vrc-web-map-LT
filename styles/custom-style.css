@@ -156,10 +156,11 @@
 
 /* アバター画像用のカラム */
 .profile-right {
-    flex: 5;
+    flex: 10;
     display: flex;
     align-items: center; 
     position: relative;
+    margin-right: -10%;
 }
 
 .highlight-box {
