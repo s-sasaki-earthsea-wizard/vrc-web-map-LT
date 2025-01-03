@@ -4,11 +4,12 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>🌏丸い地球を効率的に平たくする　〜🗺️地図の幾何学とWeb地図技術〜</title>
 
 		<link rel="stylesheet" href="dist/reset.css">
 		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css">
+		<link rel="stylesheet" href="dist/theme/beige.css">
+		<link rel="stylesheet" href="styles/custom-style.css">
 
 		<!-- Theme used for syntax highlighted code -->
 		<link rel="stylesheet" href="plugin/highlight/monokai.css">
@@ -16,8 +17,208 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section data-markdown>
+					<textarea data-template>
+
+<!-- Title -->
+## 🌏丸い地球を効率的に平たくする
+### 🗺️地図の幾何学とWeb地図技術
+
+---
+
+### 自己紹介
+
+<div class="profile-container">
+<div class="profile-left" data-markdown>
+
+* さめ(meg-ssk)
+* 🧑‍💻 フリーランスのソフトウェアエンジニア
+* 得意分野:
+	* 📸 コンピュータビジョン (画像認識/点群処理)
+	* 🌍 空間情報処理 (GIS/リモートセンシング)
+	* ☁️ クラウドインフラ設計/IaC (AWS, GCP)
+* [GitHub](https://github.com/s-sasaki-earthsea-wizard)
+* [YouTube](https://www.youtube.com/@SyotaSasaki-EW)
+* [Speaker Deck](https://speakerdeck.com/syotasasaki593876)
+</div>
+<div class="profile-right">
+
+![](assets/images/avatar.png)
+
+</div>
+</div>
+
+---
+
+### 世界地図
+
+<div class="simple-box">
+
+* 世界地図を見て思ったことはありませんか？
+* **南極デカすぎ！**
+
+</div>
+
+<img src="assets/images/OpenStreetMap.png" alt="WorldMap" width="500px">
+
+---
+
+### 地球儀で見る南極
+
+<div class="simple-box">
+
+* 地球儀で見ると意外と普通の大きさ
+* なぜなのか？
+
+</div>
+
+<img src="assets/images/cesium-globe.png" alt="Antarctica-Globe" width="500px">
+
+---
+
+### メルカトル図法
+
+<div class="simple-box">
+
+* 地球儀を平面に投影する方法の一つ
+* 東西南北の方角(角度)を維持する投影法
+* 赤道から離れるほど面積の歪みが大きくなる
+
+</div>
+
+<img src="assets/images/Mercator_projection_Square.jpeg" alt="Mercator_projection" width="425px">
+
+---
+
+### モルワイデ図法
+
+<div class="simple-box">
+
+* 面積を保存する投影法
+* 東西南北の方角は保存されない
+
+</div>
+
+<img src="assets/images/Mollweide_projection_SW.jpg" alt="Mollweide_projection" height="485px">
+
+---
+
+### ランベルト正積方位図法
+
+<div class="simple-box">
+
+* 面積と中心点からの方位を保存する投影法
+* 地球全体を平面に投影するのには不向き
+
+</div>
+
+<img src="assets/images/Lambert_azimuthal_equal-area_projection_SW.jpg" alt="Lambert_azimuthal_equal-area_projection" height="485px">
+
+---
+
+### なぜ多くの地図投影法があるのか？
+
+<div class="simple-box">
+
+* それぞれに長所と短所があるから
+  * メルカトル図法: 方角が正しい、面積は歪む
+  * モルワイデ図法: 面積が正しい、角度は歪む
+  * ランベルト正積方位図法: 中心点からの方位と面積が正しい、全世界地図には不向き
+
+</div>
+
+
+<div class="highlight-box">
+
+* 🤔面積も方角も長さも正しい「万能な地図」はないかな？
+
+</div>
+
+---
+
+### ガウス「そんなものはない」
+
+<div class="container">
+<div class="col-box-left" data-markdown>
+
+* **ガウスの驚異の定理**
+* 地球儀のすべての情報を正しく平面の地図に投影することは不可能
+* みかんの皮を剥いて平らに広げることはできない
+* **数学的補足**: 球面と平面のガウス曲率は異なるから
+
+</div>
+
+<div class="col-right">
+	<img src="assets/images/Gauss-portrait.png" alt="Gauss-portrait" width="400px">
+</div>
+
+</div>
+
+---
+
+### なぜメルカトル図法が広く使われるのか？
+
+<div class="simple-box">
+
+* **方角(角度)が正確**
+  * 数学的に言うと等角写像
+* 大航海時代、羅針盤を頼りに航海する船乗りたちにとって方角が最も重要だった
+
+</div>
+
+<div class="highlight-box">
+
+* 16世紀の航海者たちが使った地図投影法を、21世紀にとある企業が注目した...
+
+</div>
+
+---
+
+### Google Maps
+
+<div class="simple-box">
+
+* 2005年、Googleがメルカトル図法を使ったGoogle Mapsをリリース
+	* Web地図技術を開発したWhere 2 Technologies社を買収
+* 世界中の地図を手軽に見ることができるようになった
+
+</div>
+
+<div class="highlight-box">
+
+* 🤔なぜGoogleはWeb地図にメルカトル図法を選んだのか？
+
+</div>
+
+---
+
+### Webメルカトル図法の特徴
+
+<div class="simple-box">
+
+* Google Mapsで採用されたWebメルカトル図法は**Web地図に最適化された地図投影法**
+* 世界地図を正方形とすることで地図を正方形のタイル状に分割可能
+	* タイルを分割して表示することで、効率的に地図を描画できる
+	* 必要な範囲のタイルだけを取得して表示
+
+</div>
+
+---
+
+### Web地図技術
+
+<div class="simple-box">
+
+* Web地図の基本的な仕組み
+	* 地図をタイルに分割して、必要な範囲のタイルを取得して表示
+	* ズームレベルによってタイルの解像度を変える
+
+</div>
+
+example: https://tile.openstreetmap.org/17/116415/51623.png
+
+					</textarea>
+				</section>
 			</div>
 		</div>
 
