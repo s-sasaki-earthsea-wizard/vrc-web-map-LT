@@ -13,6 +13,10 @@
 
 		<!-- Theme used for syntax highlighted code -->
 		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.1/katex.min.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.1/katex.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.1/contrib/auto-render.min.js"></script>
 	</head>
 	<body>
 		<div class="reveal">
@@ -174,7 +178,7 @@
 
 ---
 
-### Google Maps
+<img src="assets/images/google-maps-logo.png" alt="Google_Maps" height="100px">
 
 <div class="simple-box">
 
@@ -197,25 +201,147 @@
 <div class="simple-box">
 
 * Google Mapsで採用されたWebメルカトル図法は**Web地図に最適化された地図投影法**
-* 世界地図を正方形とすることで地図を正方形のタイル状に分割可能
+* 世界地図を**正方形**とすることで地図を正方形のタイル状に分割可能
 	* タイルを分割して表示することで、効率的に地図を描画できる
+	* 1つのタイルは256x256ピクセル
 	* 必要な範囲のタイルだけを取得して表示
+	* 全世界の詳細な地図を取得する必要がない
+* **Webで効率的に地図を表示するための技術！**
+</div>
+
+---
+
+### ズームレベルとタイル分割
+
+<div class="simple-box">
+
+* 地図を**ズームレベル**(z)によって分割
+* 2<sup>2z</sup>個のタイルに分割 (以下はz=1の例)
+
+</div>
+
+<img src="assets/images/OSM-zoom-level-1.png" alt="Web_Mercator_projection-z=1" width="470px">
+
+---
+
+### ズームレベルを増やすと...？
+
+<div class="simple-box">
+
+* z = 2 の場合、2<sup>2*2</sup> = 16個のタイルに分割
+* z = 24 (最大値) の場合、2<sup>2*24</sup> = 約281兆個のタイルに分割
+
+</div>
+
+<img src="assets/images/OSM-zoom-level-2.png" alt="Web_Mercator_projection-z=2" width="420px">
+
+---
+
+### タイル座標の計算方法
+
+<div class="simple-box">
+
+* θ: 経度 (longitude)
+* φ: 緯度 (latitude)
+* z: ズームレベル
+* x, y: タイル座標
+* ⌊.⌋: フロア関数
+
+</div>
+
+$$ x = \left\lfloor \frac{(θ+180)}{360} \times 2^z \right\rfloor $$
+
+$$ y = \left\lfloor \Bigl(\bigl(1 - \frac{\log(\tan \varphi + \sec \varphi)}{\pi}\bigr) \times 2^z\Bigr) \right\rfloor $$
+
+---
+
+### 計算例: 東京タワーのタイルを求める
+
+東京タワーの座標は
+* 北緯: 35.658581 (degree)
+* 東経: 139.745433 (degree)
+
+z=17として先述の式に入れて計算すると
+
+$$ x = 116415$$
+$$ y = 51623$$
+---
+
+実例: OpenStreetMapのタイル
+
+<img src="assets/images/OSM-tile-example.png" alt="OSM-tile-example" width="300px">
+
+<div class="simple-box">
+
+* https://tile.openstreetmap.org/{z}/{x}/{y}.png の形式
+	* z=17, x=116415, y=51623 を入れる
+	* 東京タワーが含まれるタイルを取得！
+
+</div>
+---
+
+### よくある処理フロー
+
+<div class="simple-box">
+
+1. ユーザが地図を操作
+2. 表示範囲のタイル座標を計算
+3. タイルを取得して表示
+
+</div>
+
+<div class="highlight-box">
+
+* 今注目している範囲の256x256ピクセルのタイルを複数取得して表示するだけで、Web地図が実現できる！
+* ズームレベルと関心領域に応じて、必要な解像度の地図を必要な範囲だけ取得して表示
+* **Web地図の基本的な仕組み**
 
 </div>
 
 ---
 
-### Web地図技術
+### 実例: web地図はツギハギだらけ
 
-<div class="simple-box">
+<img src="assets/images/bing-mismatch.png" alt="bing-mismatch" height="550px">
 
-* Web地図の基本的な仕組み
-	* 地図をタイルに分割して、必要な範囲のタイルを取得して表示
-	* ズームレベルによってタイルの解像度を変える
+---
 
+### なぜツギハギがあるのか？
+
+<div class="highlight-box" data-markdown>
+
+* Bing Satelliteのズームレベルを最大にするとタイルの境界が目立つ
+* 複数枚の人工衛星画像をツギハギして、1枚の大きな地図のように見せている
+* 異なる日に撮影された画像を合成しているため、ツギハギが発生
+* 雲の少ない画像同士を選んで繋げている
+* **Web地図の裏側**
+	
 </div>
 
-example: https://tile.openstreetmap.org/17/116415/51623.png
+---
+
+### まとめ
+
+* 地球儀の情報をすべて正確に平面の地図に投影することは不可能
+* Web地図技術はWebメルカトル図法を採用している
+	* 等角写像であることから正方形に分割できることが都合がよかった
+* ズームレベルとタイル分割によって、Web地図を効率的に表示
+	* 必要なものを必要なときに必要な分だけ取得する
+	* **Web開発の基本原則を体現**
+
+---
+
+### おまけ: 3D Tiles
+
+<img src="assets/images/cesium-3D-tiles.png" alt="3D-Tiles" height="300px">
+
+<div class="highlight-box">
+
+* 3Dモデルのタイル分割技術
+* LOD (Level of Detail) によって必要な3Dデータのみを取得して表示
+* 3D地図の標準技術として注目されている
+
+</div>
 
 					</textarea>
 				</section>
@@ -226,15 +352,14 @@ example: https://tile.openstreetmap.org/17/116415/51623.png
 		<script src="plugin/notes/notes.js"></script>
 		<script src="plugin/markdown/markdown.js"></script>
 		<script src="plugin/highlight/highlight.js"></script>
+		<script src="plugin/math/math.js"></script>
 		<script>
 			// More info about initialization & config:
 			// - https://revealjs.com/initialization/
 			// - https://revealjs.com/config/
 			Reveal.initialize({
-				hash: true,
-
 				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax2]
 			});
 		</script>
 	</body>
